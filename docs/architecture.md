@@ -38,6 +38,7 @@ Record your plan here before editing code.
 - Leaderboard approach:
 - Workout suggestions approach:
 
+
 ## Test plan
 
 Record the commands you run and what each failure means.
