@@ -230,6 +230,14 @@ test('frontend grader requires shared API usage and visible states', () => {
   assert.throws(() => checks['step4-frontend'](root), /Frontend implementation/);
 });
 
+test('frontend grader accepts passing the shared API client to a reusable component', () => {
+  const root = completedFixture();
+  for (const component of ['Activities', 'Teams', 'Leaderboard', 'Workouts']) {
+    write(root, `octofit-tracker/frontend/src/components/${component}.tsx`, `import { getJson } from '../api/client.js';\nimport { CapabilityCard } from './CapabilityCard.js';\nexport default function ${component}() { return <CapabilityCard apiClient={getJson} />; }\n`);
+  }
+  assert.doesNotThrow(() => checks['step4-frontend'](root));
+});
+
 test('frontend grader rejects components that bypass the shared API client', () => {
   const root = completedFixture();
   write(root, 'octofit-tracker/frontend/src/components/Teams.tsx', `import { getJson } from '../api/client.js';\nexport async function loadTeams() { await getJson<unknown>('/api/teams'); return (await fetch('http://localhost:8000/api/teams')).json(); }\n`);
