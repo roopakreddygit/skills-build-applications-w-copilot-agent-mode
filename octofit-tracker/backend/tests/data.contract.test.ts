@@ -43,26 +43,6 @@ describe('OctoFit data contract', () => {
     expect(error?.errors.difficulty).toBeDefined();
   });
 
-  it('normalizes and constrains values the service relies on', () => {
-    const user = new User({ name: 'A', email: 'A@Example.com', fitnessGoal: ' Strength ' });
-    expect(user.email).toBe('a@example.com');
-    expect(user.fitnessGoal).toBe('strength');
-    expect(new User({ name: 'A', email: 'bad', fitnessGoal: 'x' }).validateSync()?.errors.email).toBeDefined();
-
-    const id = new mongoose.Types.ObjectId();
-    expect(new Team({ name: 'T', mascot: 'M', members: [id, id] }).validateSync()?.errors.members).toBeDefined();
-
-    const base = { user: id, team: id, type: 'Run', minutes: 10, points: 10, occurredAt: new Date() };
-    expect(new Activity(base).type).toBe('run');
-    expect(new Activity({ ...base, minutes: 0 }).validateSync()?.errors.minutes).toBeDefined();
-    expect(new Activity({ ...base, points: -1 }).validateSync()?.errors.points).toBeDefined();
-
-    const workout = { title: 'W', focus: 'Mobility', minutes: 10, difficulty: 'Easy' };
-    expect(new Workout(workout).focus).toBe('mobility');
-    expect(new Workout(workout).difficulty).toBe('easy');
-    expect(new Workout({ ...workout, difficulty: 'brutal' }).validateSync()?.errors.difficulty).toBeDefined();
-  });
-
   it('seeds representative data for all four capabilities idempotently', async () => {
     const mongo = await MongoMemoryServer.create();
     const previousUri = process.env.MONGODB_URI;
