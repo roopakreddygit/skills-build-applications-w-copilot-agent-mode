@@ -1,3 +1,4 @@
+import type { getJson } from '../api/client.js';
 import { useCapabilityData } from '../hooks/useCapabilityData.js';
 
 type Props = {
@@ -6,6 +7,7 @@ type Props = {
   endpoint: string;
   responseKey: string;
   emptyMessage: string;
+  apiClient: typeof getJson;
 };
 
 function displayValue(value: unknown): string {
@@ -14,8 +16,8 @@ function displayValue(value: unknown): string {
   return String(value);
 }
 
-export function CapabilityCard({ title, description, endpoint, responseKey, emptyMessage }: Props) {
-  const { items, loading, error } = useCapabilityData<Record<string, unknown>>(endpoint, responseKey);
+export function CapabilityCard({ title, description, endpoint, responseKey, emptyMessage, apiClient }: Props) {
+  const { items, loading, error } = useCapabilityData<Record<string, unknown>>(endpoint, responseKey, apiClient);
 
   return (
     <section className="card h-100">

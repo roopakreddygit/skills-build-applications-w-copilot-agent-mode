@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getJson } from '../api/client.js';
+import type { getJson } from '../api/client.js';
 
 type CapabilityState<T> = {
   items: T[];
@@ -7,7 +7,7 @@ type CapabilityState<T> = {
   error: string | null;
 };
 
-export function useCapabilityData<T>(endpoint: string, key: string) {
+export function useCapabilityData<T>(endpoint: string, key: string, apiClient: typeof getJson) {
   const [state, setState] = useState<CapabilityState<T>>({
     items: [],
     loading: true,
@@ -17,7 +17,7 @@ export function useCapabilityData<T>(endpoint: string, key: string) {
   useEffect(() => {
     let active = true;
 
-    getJson<Record<string, T[]>>(endpoint)
+    apiClient<Record<string, T[]>>(endpoint)
       .then((response) => {
         const items = response[key];
         if (!Array.isArray(items)) throw new Error('Invalid API response');
@@ -30,7 +30,7 @@ export function useCapabilityData<T>(endpoint: string, key: string) {
     return () => {
       active = false;
     };
-  }, [endpoint, key]);
+  }, [apiClient, endpoint, key]);
 
   return state;
 }
